@@ -21,7 +21,7 @@
           <div class="text-secondary d-flex justify-content-between">
             <div>From: {{post.sender.slice(0,6) + '...'+ post.sender.slice(62)}}</div>          
             <div>
-              <a :href="'#/message/' + post.id">
+              <a :href="'#/post/' + post.id">
                 {{new Date(post.timestamp * 1000).toLocaleDateString("ru-RU") + '  ' + new Date(post.timestamp * 1000).toLocaleTimeString("en-US")}}
               </a>
             </div>
@@ -34,7 +34,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import {sendMessage, getMessages} from '@/api';
+import {sendMessage, getPosts} from '@/api';
 import LoginLogout from '@/components/LoginLogout.vue'; 
 
 export default Vue.extend({
@@ -57,14 +57,18 @@ export default Vue.extend({
       sendMessage(this.message, this.$route.params.chatAddress).then(() => {
         this.message = '';
         //refresh posts
-       getMessages(this.$route.params.chatAddress).then(posts => {
+       getPosts(this.$route.params.chatAddress).then(posts => {
+        if(typeof posts === 'undefined'){
+          alert('Something went wrong');
+        }else{
          this.posts = posts;
+        }
        });
       });
     },
   },
   async mounted() {
-    this.posts = await getMessages(this.$route.params.chatAddress);
+    this.posts = await getPosts(this.$route.params.chatAddress);
     console.log(this.posts);
   },
   components:{

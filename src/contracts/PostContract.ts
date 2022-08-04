@@ -1,4 +1,4 @@
-export const ChatContract = {
+export const PostContract = {
     abi: {
         "ABI version": 2,
         "version": "2.2",

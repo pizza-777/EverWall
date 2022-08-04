@@ -35,7 +35,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-, "src/api.js", "src/contracts/ChatContract.ts"  ],
+, "src/api.js", "src/contracts/PostContract.ts"  ],
   "exclude": [
     "node_modules"
   ]

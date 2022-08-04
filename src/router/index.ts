@@ -13,16 +13,13 @@ const routes: Array<RouteConfig> = [
   {
     path: '/wall/:chatAddress',
     name: 'wall',
-    component: () => import(/* webpackChunkName: "about" */ '../views/WallView.vue')
+    component: () => import('../views/WallView.vue')
   
   },
   {
-    path: '/message/:messageId',
-    name: 'messageView',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/MessageView.vue')
+    path: '/post/:postId',
+    name: 'postView',    
+    component: () => import('../views/PostView.vue')
   }
 ]
 

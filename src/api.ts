@@ -4,8 +4,7 @@ import {
   WalletContractType,
 } from 'everscale-inpage-provider';
 
-import { ChatContract } from '@/contracts/ChatContract';
-import { ChatFatherContract } from '@/contracts/ChatFatherContract';
+import { PostContract } from '@/contracts/PostContract';
 
 type everWallet = { address: Address; publicKey: string; contractType: WalletContractType; }
 
@@ -40,66 +39,12 @@ async function everWallet(): Promise<everWallet | never> {
   return _accountInteraction;
 }
 
-export async function createWall(): Promise<string | undefined> {
-  const everProvider = await ever();
-
-  try {
-    const chatId = await createChat();
-    console.log("chatId", chatId);
-
-    if (chatId) {
-      const address: Address = await everProvider.getExpectedAddress(ChatContract.abi,
-        {
-          tvc: ChatContract.tvc,
-          workchain: 0,
-          initParams: {
-            chatId
-          }
-        })
-      console.log("Address: " + address);
-      return address.toString();
-    } else {
-      console.log("Error creating chat");
-    }
-  } catch (e: unknown) {
-    console.log(e);
-  }
-}
-
-async function createChat(): Promise<number | undefined> {
-  const accountInteraction = await everWallet();
-  const everProvider = await ever();
-
-  if (typeof accountInteraction !== 'undefined') {
-    const chatFather = new everProvider.Contract(
-      ChatFatherContract.abi,
-      new Address('0:36064b6eb94a6f4d5e2e817d200d06de291910947e9f8271011ec6ac112d1b24')
-    );
-    console.log(chatFather);
-    try {
-      const chatId: number = Date.now();
-      const transaction = await chatFather.methods.deploy({
-        chatId,
-        chatCode: ChatContract.code,
-      }).send({
-        from: accountInteraction.address,
-        amount: '100000000',
-        bounce: true
-      })
-      console.log(transaction);
-      return chatId;
-    } catch (e: unknown) {
-      console.log(e);
-    }
-  }
-}
-
 export async function sendMessage(message: string, chatAddress: string) {
   const everProvider = await ever();
   const accountInteraction = await everWallet();
 
   const chat = new everProvider.Contract(
-    ChatContract.abi,
+    PostContract.abi,
     new Address(chatAddress)
   );
   try {
@@ -112,21 +57,20 @@ export async function sendMessage(message: string, chatAddress: string) {
     })
     return tr;
   } catch (e: unknown) {
-    console.log(e);
+    console.error(e);
   }
 }
 
-export async function getMessages(chatAddress: string) {
+export async function getPosts(chatAddress: string): Promise<{ message: string, sender: string, timestamp: number, id: string }[] | undefined> {
   const everProvider = await ever();
   const chat = new everProvider.Contract(
-    ChatContract.abi,
+    PostContract.abi,
     new Address(chatAddress)
   );
   try {
     const transactions = (await everProvider.getTransactions({
       address: chat.address,
     })).transactions
-    console.log('transactions', transactions);
 
     const data = transactions.map((t) => {
       return {
@@ -136,8 +80,6 @@ export async function getMessages(chatAddress: string) {
         id: t.id.hash
       }
     }).filter((t) => {
-      console.log('t: ', t);
-
       if (t.message == '') return false;
       return true;
     });
@@ -145,7 +87,6 @@ export async function getMessages(chatAddress: string) {
     let decodedMessage: { message: string } | undefined
     for (let i = 0; i < data.length; i++) {
       decodedMessage = await decodeBody(data[i].message);
-      console.log('decoded Message2: ', decodedMessage);
 
       if (typeof decodedMessage == 'undefined') {
         data.splice(i, 1);
@@ -155,7 +96,6 @@ export async function getMessages(chatAddress: string) {
       data[i].message = decodedMessage.message;
 
     }
-    console.log("data resulted", data);
     return data;
 
   } catch (e: unknown) {
@@ -173,7 +113,7 @@ async function decodeBody(body: string): Promise<{ message: string } | undefined
       boc: body,
       allowPartial: true
     });
-    console.log('decoded message', message);
+
     return message.data;
 
   } catch (e) {
@@ -214,14 +154,17 @@ export async function authState(): Promise<boolean | string> {
   return state.permissions.accountInteraction.address.toString();
 }
 
-export async function getMessage(hash: string) {
+export async function getPost(hash: string) {
 
   const _ever = await ever();
 
   try {
     const t = (await _ever.getTransaction({ hash: hash })).transaction
-    console.log(t);
-    if (typeof t === 'undefined') return
+
+    if (typeof t === 'undefined'){
+      console.error('undefined t');
+      return
+    } 
     const data = {
       sender: t.inMessage.src?.toString() ?? '',
       message: t.inMessage.body?.toString() ?? '',
@@ -230,13 +173,15 @@ export async function getMessage(hash: string) {
     }
 
     const message = await decodeBody(data.message);
-    if (typeof message === 'undefined') return
-    data.message = message.message;
+    if (typeof message === 'undefined') {
+      console.error('undefined message');
+      return
+    }
+    data.message = message.message;   
     return data;
-    
+
   } catch (e: unknown) {
-    console.log(e);
+    console.error(e);
     // alert('Wrong message ID')
   }
-
 }
