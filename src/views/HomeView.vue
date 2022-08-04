@@ -1,8 +1,17 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <CreateWall msg="Welcome to Your Vue.js + TypeScript App"/>
-  </div>
+  <div>
+  <b-container>
+    <b-row class="vh-100 text-center" align-v="center">
+      <b-col>
+        </b-col>
+          <b-col><img alt="Vue logo" src="../assets/logo.png">
+          <CreateWall msg="Welcome to Your Vue.js + TypeScript App"/>
+        </b-col>
+      <b-col></b-col>
+    </b-row>  
+    
+  </b-container>
+   </div>
 </template>
 
 <script lang="ts">

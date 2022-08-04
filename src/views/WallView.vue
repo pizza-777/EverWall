@@ -1,8 +1,7 @@
 <template>
-  <div class="container">
-    <h1>This is the title of wall</h1>
+  <div class="container mt-5">    
      <div class="text-primary">Wall contract: {{this.$route.params.chatAddress}}</div>
-     <b-form>
+     <b-form class="mt-3">
      <b-form-group>
      <b-form-textarea class="mt-3 mb-3" placeholder="Write something ... "  v-model="message"></b-form-textarea>
      </b-form-group>

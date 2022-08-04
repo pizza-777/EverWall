@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
-      <button @click="test()">Create Wall</button>    
-      <div id="createWallInfo" v-html="createWallInfoMessage"></div>
+      <b-button variant="outline-primary" @click="createWall()">Create Wall</b-button>    
+      <div id="createWallInfo" class="mt-3" v-html="createWallInfoMessage"></div>
   </div>  
 </template>
 
@@ -20,9 +20,10 @@ export default Vue.extend({
     };
   },
   methods: {
-    async test() {
-      const address: string = await createWall();
-      this.createWallInfoMessage = `<a href="/#/chat/${address}">New wall created</a>`;   
+    async createWall() {
+      const address: string | undefined = await createWall();
+      if(typeof address === 'undefined') return
+      this.createWallInfoMessage = `<a href="/#/wall/${address}">New wall</a> created`;   
     },
   },
 });

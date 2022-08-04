@@ -71,7 +71,7 @@ async function createChat(): Promise<number | undefined> {
   if (typeof accountInteraction !== 'undefined') {
     const chatFather = new everProvider.Contract(
       ChatFatherContract.abi,
-      new Address('0:2e95e64b74f6bdff751681c58471f89dec0254ff75e87da10b4ed8ec9d8eef79')
+      new Address('0:36064b6eb94a6f4d5e2e817d200d06de291910947e9f8271011ec6ac112d1b24')
     );
     console.log(chatFather);
     try {
@@ -81,7 +81,7 @@ async function createChat(): Promise<number | undefined> {
         chatCode: ChatContract.code,
       }).send({
         from: accountInteraction.address,
-        amount: '1000000000',
+        amount: '100000000',
         bounce: true
       })
       console.log(transaction);
