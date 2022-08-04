@@ -10,12 +10,13 @@ import { ChatFatherContract } from '@/contracts/ChatFatherContract';
 type everWallet = { address: Address; publicKey: string; contractType: WalletContractType; }
 
 let _ever: ProviderRpcClient;
-let _accountInteraction: everWallet;
+let _accountInteraction: everWallet | undefined;
 
 async function ever(): Promise<ProviderRpcClient> | never {
   if (typeof _ever === 'undefined') {
     _ever = new ProviderRpcClient();
     if (!(await _ever.hasProvider())) {
+      alert('Please install the EverWallet extension');
       throw new Error('Extension is not installed');
     }
   }
@@ -30,6 +31,7 @@ async function everWallet(): Promise<everWallet | never> {
       permissions: ['basic', 'accountInteraction'],
     });
     if (accountInteraction == null) {
+      alert('Issue with permissions');
       throw new Error('Insufficient permissions');
     }
     _accountInteraction = accountInteraction
@@ -130,7 +132,8 @@ export async function getMessages(chatAddress: string) {
       return {
         sender: t.inMessage.src?.toString() ?? '',
         message: t.inMessage.body?.toString() ?? '',
-        timestamp: t.createdAt
+        timestamp: t.createdAt,
+        id: t.id.hash
       }
     }).filter((t) => {
       console.log('t: ', t);
@@ -178,4 +181,62 @@ async function decodeBody(body: string): Promise<{ message: string } | undefined
   }
 }
 
+export function genRandomAddress(): string {
+  let address = '0:';
+  const chars = '0123456789abcdef';
+  for (let i = 0; i < 64; i++) {
+    address += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return address;
+}
 
+export async function login() {
+  await everWallet()
+  const _ever = await ever();
+  await _ever.ensureInitialized()
+}
+
+export async function logout() {
+  const _ever = await ever();
+  _ever.disconnect();
+  _accountInteraction = undefined
+}
+
+export async function authState(): Promise<boolean | string> {
+  const _ever = await ever();
+
+  const state = await _ever.getProviderState()
+
+  if (typeof state.permissions.accountInteraction === 'undefined') {
+    return false
+  }
+
+  return state.permissions.accountInteraction.address.toString();
+}
+
+export async function getMessage(hash: string) {
+
+  const _ever = await ever();
+
+  try {
+    const t = (await _ever.getTransaction({ hash: hash })).transaction
+    console.log(t);
+    if (typeof t === 'undefined') return
+    const data = {
+      sender: t.inMessage.src?.toString() ?? '',
+      message: t.inMessage.body?.toString() ?? '',
+      timestamp: t.createdAt,
+      id: t.id.hash
+    }
+
+    const message = await decodeBody(data.message);
+    if (typeof message === 'undefined') return
+    data.message = message.message;
+    return data;
+    
+  } catch (e: unknown) {
+    console.log(e);
+    // alert('Wrong message ID')
+  }
+
+}

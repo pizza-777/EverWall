@@ -4,8 +4,8 @@
     <b-row class="vh-100 text-center" align-v="center">
       <b-col>
         </b-col>
-          <b-col><img alt="Vue logo" src="../assets/logo.png">
-          <CreateWall msg="Welcome to Your Vue.js + TypeScript App"/>
+          <b-col>
+          <CreateWall msg="Everscale Walls"/>
         </b-col>
       <b-col></b-col>
     </b-row>  
@@ -21,7 +21,7 @@ import CreateWall from '@/components/CreateWall.vue'; // @ is an alias to /src
 export default Vue.extend({
   name: 'HomeView',
   components: {
-    CreateWall,
+    CreateWall
   },
 });
 </script>

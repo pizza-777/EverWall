@@ -1,6 +1,11 @@
 <template>
-  <div class="container mt-5">    
-     <div class="text-primary">Wall contract: {{this.$route.params.chatAddress}}</div>
+<div> 
+  <div><LoginLogout/></div>
+   <nav class="text-center mt-1">
+      <router-link to="/">Home</router-link> 
+    </nav> 
+ <div class="container mt-5">   
+     <div class="text-primary">Wall address: {{this.$route.params.chatAddress}}</div>
      <b-form class="mt-3">
      <b-form-group>
      <b-form-textarea class="mt-3 mb-3" placeholder="Write something ... "  v-model="message"></b-form-textarea>
@@ -14,16 +19,23 @@
           <div>{{post.message}}</div>
           <br>
           <div class="text-secondary d-flex justify-content-between">
-            <div>From: {{post.sender.slice(0,6) + '...'+ post.sender.slice(60)}}</div>
-            <div>{{new Date(post.timestamp * 1000).toLocaleDateString("ru-RU") + ' ' + new Date(post.timestamp * 1000).toLocaleTimeString("en-US")}}</div>
+            <div>From: {{post.sender.slice(0,6) + '...'+ post.sender.slice(62)}}</div>          
+            <div>
+              <a :href="'#/message/' + post.id">
+                {{new Date(post.timestamp * 1000).toLocaleDateString("ru-RU") + '  ' + new Date(post.timestamp * 1000).toLocaleTimeString("en-US")}}
+              </a>
+            </div>
           </div>
         </b-list-group-item>
       </b-list-group>
   </div>
+</div>
+ 
 </template>
 <script lang="ts">
 import Vue from 'vue';
 import {sendMessage, getMessages} from '@/api';
+import LoginLogout from '@/components/LoginLogout.vue'; 
 
 export default Vue.extend({
   name: 'WallView',
@@ -55,5 +67,8 @@ export default Vue.extend({
     this.posts = await getMessages(this.$route.params.chatAddress);
     console.log(this.posts);
   },
+  components:{
+    LoginLogout
+  }
 });
 </script>
