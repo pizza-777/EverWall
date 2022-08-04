@@ -105,7 +105,7 @@ export async function sendMessage(message: string, chatAddress: string) {
       message: message,
     }).send({
       from: accountInteraction.address,
-      amount: '1000000000',
+      amount: '1',
       bounce: true
     })
     return tr;
