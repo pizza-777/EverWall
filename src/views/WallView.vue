@@ -58,25 +58,28 @@ export default Vue.extend({
          this.loader = false;
         return;
       }
-      sendMessage(this.message, this.$route.params.chatAddress).then(() => {
-       
+      sendMessage(this.message, this.$route.params.chatAddress).then(() => {       
         this.authTrigger= this.authTrigger ? false : true;
-        this.message = '';
+        this.message = '';  
         //refresh posts
-       getPosts(this.$route.params.chatAddress).then(posts => {
+       getPosts(this.$route.params.chatAddress).then(posts => {       
         if(typeof posts === 'undefined'){
           alert('Something went wrong');
         }else{
          this.posts = posts;
          this.loader = false;
         }
-       });       
-      });
+       })
+      }).finally(() => {
+        this.loader = false;
+       });
     },
   },
   async mounted() {
-    this.posts = await getPosts(this.$route.params.chatAddress);
-    console.log(this.posts);
+    const posts = await getPosts(this.$route.params.chatAddress);
+    if(typeof posts !== 'undefined'){   
+      this.posts = posts;
+    }
   },
   components:{
     LoginLogout
