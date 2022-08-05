@@ -11,7 +11,7 @@
      <b-form-textarea class="mt-3 mb-3" placeholder="Write something ... "  v-model="message"></b-form-textarea>
      </b-form-group>
     
-     <b-button variant="outline-primary" @click="submit()">submit</b-button>
+     <b-button variant="outline-primary" @click="submit()">submit<b-spinner style="margin-left:0.3em" v-if="loader" small></b-spinner></b-button>
     
      </b-form>
       <b-list-group class="mt-5">        
@@ -47,15 +47,19 @@ export default Vue.extend({
       message: '',
       posts: [],
       authTrigger: false,
+      loader: false
     };
   },
   methods: {
     async submit() {
+      this.loader = true;
       if(this.message === '') {
         alert('Please, write something');        
+         this.loader = false;
         return;
       }
       sendMessage(this.message, this.$route.params.chatAddress).then(() => {
+       
         this.authTrigger= this.authTrigger ? false : true;
         this.message = '';
         //refresh posts
@@ -64,8 +68,9 @@ export default Vue.extend({
           alert('Something went wrong');
         }else{
          this.posts = posts;
+         this.loader = false;
         }
-       });
+       });       
       });
     },
   },
