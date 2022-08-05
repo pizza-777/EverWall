@@ -25,7 +25,7 @@ export default Vue.extend({
     async createWall() {
       const address: string = genRandomAddress();
       if (typeof address === "undefined") return;
-      this.createWallInfoMessage = `<a href="/#/wall/${address}">New wall</a> created`;
+      this.createWallInfoMessage = `<a href="./#/wall/${address}">New wall</a> created`;
     },
   },
 });

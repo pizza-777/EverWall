@@ -1,6 +1,6 @@
 <template>
 <div> 
-  <div><LoginLogout/></div>
+  <div><LoginLogout :authProp="authTrigger"/></div>
    <nav class="text-center mt-1">
       <router-link to="/">Home</router-link> 
     </nav> 
@@ -21,7 +21,7 @@
           <div class="text-secondary d-flex justify-content-between">
             <div>From: {{post.sender.slice(0,6) + '...'+ post.sender.slice(62)}}</div>          
             <div>
-              <a :href="'#/post/' + post.id">
+              <a :href="'./#/post/' + post.id">
                 {{new Date(post.timestamp * 1000).toLocaleDateString("ru-RU") + '  ' + new Date(post.timestamp * 1000).toLocaleTimeString("en-US")}}
               </a>
             </div>
@@ -46,15 +46,17 @@ export default Vue.extend({
     return {
       message: '',
       posts: [],
+      authTrigger: false,
     };
   },
   methods: {
     async submit() {
       if(this.message === '') {
-        alert('Please, write something');
+        alert('Please, write something');        
         return;
       }
       sendMessage(this.message, this.$route.params.chatAddress).then(() => {
+        this.authTrigger= this.authTrigger ? false : true;
         this.message = '';
         //refresh posts
        getPosts(this.$route.params.chatAddress).then(posts => {
