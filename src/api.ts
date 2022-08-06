@@ -5,11 +5,20 @@ import {
 } from 'everscale-inpage-provider';
 
 import { PostContract } from '@/contracts/PostContract';
+import { EverscaleStandaloneClient } from 'everscale-standalone-client';
 
 type everWallet = { address: Address; publicKey: string; contractType: WalletContractType; }
 
 let _ever: ProviderRpcClient;
 let _accountInteraction: everWallet | undefined;
+
+const _everStandalone = new ProviderRpcClient({
+  fallback: () =>
+    EverscaleStandaloneClient.create({
+      connection: 'mainnet',
+    }),
+      forceUseFallback: true,
+});
 
 async function ever(): Promise<ProviderRpcClient> | never {
   if (typeof _ever === 'undefined') {
@@ -62,7 +71,7 @@ export async function sendMessage(message: string, chatAddress: string) {
 }
 
 export async function getPosts(chatAddress: string): Promise<{ message: string, sender: string, timestamp: number, id: string }[] | undefined> {
-  const everProvider = await ever();
+  const everProvider = _everStandalone;
   const chat = new everProvider.Contract(
     PostContract.abi,
     new Address(chatAddress)
@@ -104,7 +113,7 @@ export async function getPosts(chatAddress: string): Promise<{ message: string, 
 }
 
 async function decodeBody(body: string): Promise<{ message: string } | undefined> {
-  const everProvider = await ever();
+  const everProvider = _everStandalone;
   try {
     const message = await everProvider.unpackFromCell({
       structure: [
@@ -156,7 +165,7 @@ export async function authState(): Promise<boolean | string> {
 
 export async function getPost(hash: string) {
 
-  const _ever = await ever();
+  const _ever = _everStandalone;
 
   try {
     const t = (await _ever.getTransaction({ hash: hash })).transaction
