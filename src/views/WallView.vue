@@ -15,7 +15,7 @@
     
      </b-form>
       <b-list-group class="mt-5">        
-        <b-list-group-item v-for="post in posts" :key="post.message">
+        <b-list-group-item v-for="post in posts" :key="post.id">
           <div>{{post.message}}</div>
           <br>
           <div class="text-secondary d-flex justify-content-between">
