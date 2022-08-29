@@ -1,6 +1,5 @@
 <template>
-    <div>       
-      <div><LoginLogout/></div>
+    <div>             
          <nav class="text-center mt-1">
       <router-link to="/">Home</router-link> 
     </nav> 
@@ -26,7 +25,6 @@
 <script>
 import Vue from 'vue';
 import   {getPost} from '@/api';
-import LoginLogout from '@/components/LoginLogout.vue'; 
 
 export default Vue.extend({
   name: 'PostView',
@@ -44,9 +42,6 @@ export default Vue.extend({
                 this.posts = [post];
             }        
         });
-    },
-    components: {
-        LoginLogout,
-    },
+    }
 });
 </script>
