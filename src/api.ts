@@ -5,7 +5,7 @@ import {
 } from 'everscale-inpage-provider';
 
 import { PostContract } from '@/contracts/PostContract';
-import { EverscaleStandaloneClient } from 'everscale-standalone-client';
+import { ConnectionProperties, EverscaleStandaloneClient } from 'everscale-standalone-client';
 
 type everWallet = { address: Address; publicKey: string; contractType: WalletContractType; }
 
@@ -15,7 +15,15 @@ let _accountInteraction: everWallet | undefined;
 const _everStandalone = new ProviderRpcClient({
   fallback: () =>
     EverscaleStandaloneClient.create({
-      connection: 'mainnet',
+      connection: {
+        id: 1,
+        group: 'testnet',
+        type: 'graphql',
+        data: {
+          endpoints: ["https://mainnet.evercloud.dev/7a7a6dcbbfd54069be906c64938f5962/graphql"],
+          local: false,
+        }
+      } as ConnectionProperties,
     }),
       forceUseFallback: true,
 });
