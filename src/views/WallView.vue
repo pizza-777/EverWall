@@ -60,9 +60,12 @@ export default Vue.extend({
         return;
       }
       this.submitDisabled = true
-      sendMessage(this.message, this.$route.params.chatAddress).then(() => {       
-        this.authTrigger= this.authTrigger ? false : true;
-        this.message = '';  
+      sendMessage(this.message, this.$route.params.chatAddress).then((tr) => {       
+        if(typeof tr !== 'undefined'){
+          this.authTrigger= this.authTrigger ? false : true;
+          this.message = '';  
+        }
+
         //refresh posts
        getPosts(this.$route.params.chatAddress).then(posts => {       
         if(typeof posts === 'undefined'){
@@ -73,6 +76,7 @@ export default Vue.extend({
         }
        })
       }).finally(() => {
+        this.authTrigger= this.authTrigger ? false : true;
         this.loader = false;
         this.submitDisabled = false
        });
