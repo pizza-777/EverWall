@@ -11,7 +11,7 @@
      <b-form-textarea class="mt-3 mb-3" placeholder="Write something ... "  v-model="message"></b-form-textarea>
      </b-form-group>
     
-     <b-button variant="outline-primary" @click="submit()">submit<b-spinner style="margin-left:0.3em" v-if="loader" small></b-spinner></b-button>
+     <b-button :disabled="submitDisabled" variant="outline-primary" @click="submit()">submit<b-spinner style="margin-left:0.3em" v-if="loader" small></b-spinner></b-button>
     
      </b-form>
       <b-list-group class="mt-5">        
@@ -47,7 +47,8 @@ export default Vue.extend({
       message: '',
       posts: [],
       authTrigger: false,
-      loader: false
+      loader: false,
+      submitDisabled: false
     };
   },
   methods: {
@@ -58,6 +59,7 @@ export default Vue.extend({
          this.loader = false;
         return;
       }
+      this.submitDisabled = true
       sendMessage(this.message, this.$route.params.chatAddress).then(() => {       
         this.authTrigger= this.authTrigger ? false : true;
         this.message = '';  
@@ -72,6 +74,7 @@ export default Vue.extend({
        })
       }).finally(() => {
         this.loader = false;
+        this.submitDisabled = false
        });
     },
   },
